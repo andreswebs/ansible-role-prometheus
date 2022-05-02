@@ -1,0 +1,4 @@
+- labels:
+    job: node
+  targets: []
+    # - workload:9100 ## example

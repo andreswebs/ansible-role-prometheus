@@ -1,0 +1,49 @@
+---
+- name: Install prometheus
+  ansible.builtin.apt:
+    update_cache: yes
+    name:
+      - prometheus
+  tags:
+    - prometheus
+    - prometheus_install
+
+- name: Set Prometheus config
+  ansible.builtin.copy:
+    src: prometheus.config.yml
+    dest: /etc/prometheus/prometheus.yml
+  tags:
+    - prometheus
+    - prometheus_config
+
+- name: Create Prometheus targets dir
+  ansible.builtin.file:
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+    dest: /etc/prometheus/targets.d
+  tags:
+    - prometheus
+    - prometheus_system
+    - prometheus_config
+
+- name: Set targets file
+  ansible.builtin.copy:
+    owner: root
+    group: root
+    mode: '0644'
+    src: prometheus.targets.yml
+    dest: /etc/prometheus/targets.d/node.yml
+  tags:
+    - prometheus
+    - prometheus_config
+
+- name: Start and enable Prometheus service
+  ansible.builtin.service:
+    name: prometheus
+    state: started
+    enabled: true
+  tags:
+    - prometheus
+    - prometheus_service
