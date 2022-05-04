@@ -1,15 +1,55 @@
 ---
-- name: Install prometheus
-  ansible.builtin.apt:
-    update_cache: yes
-    name:
-      - prometheus
+- name: Create prometheus group
+  ansible.builtin.group:
+    state: present
+    name: prometheus
+    system: yes
   tags:
     - prometheus
-    - prometheus_install
+    - prometheus_system
+
+- name: Create prometheus user
+  ansible.builtin.user:
+    state: present
+    name: prometheus
+    group: prometheus
+    system: yes
+    create_home: no
+    home: /var/lib/prometheus
+    shell: /usr/sbin/nologin
+    password: "*"
+  tags:
+    - prometheus
+    - prometheus_system
+
+- name: Create /var/lib/prometheus
+  ansible.builtin.file:
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+    state: directory
+    dest: /var/lib/prometheus
+  tags:
+    - prometheus
+    - prometheus_system
+
+- name: Create Prometheus config dir
+  ansible.builtin.file:
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+    dest: /etc/prometheus
+  tags:
+    - prometheus
+    - prometheus_system
+    - prometheus_config
 
 - name: Set Prometheus config
   ansible.builtin.copy:
+    owner: root
+    group: root
+    mode: '0644'
     src: prometheus.config.yml
     dest: /etc/prometheus/prometheus.yml
   tags:
@@ -38,6 +78,25 @@
   tags:
     - prometheus
     - prometheus_config
+
+- name: Install Prometheus
+  script: scripts/install-prometheus
+  args:
+    creates: /usr/local/bin/prometheus
+  tags:
+    - prometheus
+    - prometheus_install
+
+- name: Set /lib/systemd/system/prometheus.service
+  ansible.builtin.copy:
+    owner: root
+    group: root
+    mode: '0644'
+    src: prometheus.service
+    dest: /lib/systemd/system/prometheus.service
+  tags:
+    - prometheus
+    - prometheus_service
 
 - name: Start and enable Prometheus service
   ansible.builtin.service:

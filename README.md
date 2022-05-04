@@ -2,6 +2,11 @@
 
 Ansible role to install Prometheus.
 
+## Requirements
+
+The `jq` program must be installed on the host. See the
+[jq web page](https://stedolan.github.io/jq/) to install.
+
 ## Install
 
 ```sh
