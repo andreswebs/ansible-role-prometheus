@@ -1,0 +1,73 @@
+---
+- name: Create /var/lib/alertmanager
+  ansible.builtin.file:
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+    state: directory
+    dest: /var/lib/alertmanager
+  tags:
+    - alertmanager
+    - alertmanager_system
+
+- name: Create /var/lib/alertmanager/data
+  ansible.builtin.file:
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+    state: directory
+    dest: /var/lib/alertmanager/data
+  tags:
+    - alertmanager
+    - alertmanager_system
+
+- name: Create Alertmanager config dir
+  ansible.builtin.file:
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+    dest: /etc/alertmanager
+  tags:
+    - alertmanager
+    - alertmanager_system
+    - alertmanager_config
+
+- name: Set Alertmanager config
+  ansible.builtin.copy:
+    owner: root
+    group: root
+    mode: '0644'
+    src: alertmanager.config.yml
+    dest: /etc/alertmanager/alertmanager.yml
+  tags:
+    - alertmanager
+    - alertmanager_config
+
+- name: Install Alertmanager
+  script: scripts/install-alertmanager
+  args:
+    creates: /usr/local/bin/alertmanager
+  tags:
+    - alertmanager
+    - alertmanager_install
+
+- name: Set /lib/systemd/system/alertmanager.service
+  ansible.builtin.copy:
+    owner: root
+    group: root
+    mode: '0644'
+    src: alertmanager.service
+    dest: /lib/systemd/system/alertmanager.service
+  tags:
+    - alertmanager
+    - alertmanager_service
+
+- name: Start and enable Alertmanager service
+  ansible.builtin.service:
+    name: alertmanager
+    state: started
+    enabled: true
+  tags:
+    - alertmanager
+    - alertmanager_service

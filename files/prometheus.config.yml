@@ -9,12 +9,10 @@ global:
 alerting:
   alertmanagers:
     - static_configs:
-      - targets: []
-        # - localhost:9093
+      - targets:
+        - localhost:9093
 
 rule_files: []
-  # - "first_rules.yml"
-  # - "second_rules.yml"
 
 scrape_configs:
 
@@ -26,10 +24,14 @@ scrape_configs:
     static_configs:
       - targets: [localhost:3000]
 
-  # - job_name: localnode
-  #   static_configs:
-  #     - targets: [localhost:9100]
+  - job_name: alertmanager
+    static_configs:
+      - targets: [localhost:9093]
 
   - job_name: node
     file_sd_configs:
       - files: [/etc/prometheus/targets.d/node.yml]
+
+  # - job_name: localnode
+  #   static_configs:
+  #     - targets: [localhost:9100]

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+BIN_NAME="alertmanager"
+OS="linux"
+ARCH="amd64"
+
+REPO="prometheus/${BIN_NAME}"
+TARBALL_URL=$(curl --silent "https://api.github.com/repos/${REPO}/releases/latest" | jq -r .tarball_url)
+VERSION=$(grep -o '[^/v]*$' <<< "${TARBALL_URL}")
+FILE_PREFIX="${BIN_NAME}-${VERSION}.${OS}-${ARCH}"
+FILE_NAME="${FILE_PREFIX}.tar.gz"
+DOWNLOAD_URL="https://github.com/${REPO}/releases/download/v${VERSION}/${FILE_NAME}"
+
+WORKDIR="$(mktemp -d -t ${BIN_NAME}.XXXXXXXXX)"
+
+TMP_FILE="${WORKDIR}/${FILE_NAME}"
+
+INSTALL_PATH="/usr/local/bin/"
+
+function finish {
+  rm -rf "${WORKDIR}"
+}
+
+trap finish EXIT
+
+curl --silent -Lo "${TMP_FILE}" "${DOWNLOAD_URL}"
+tar -xzf "${TMP_FILE}" --directory "${WORKDIR}"
+
+mv "${WORKDIR}/${FILE_PREFIX}" /opt/
+
+mkdir -p /etc/prometheus
+
+ln -s "/opt/${FILE_PREFIX}/${BIN_NAME}" "${INSTALL_PATH}"
+ln -s "/opt/${FILE_PREFIX}/amtool" "${INSTALL_PATH}"

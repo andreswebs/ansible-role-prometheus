@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Andre Silva
-  description: Installs Prometheus
+  description: Installs Prometheus and Alertmanager
   role_name: prometheus
 
   license: Unlicense
@@ -18,5 +18,6 @@ galaxy_info:
 
   galaxy_tags:
     - prometheus
+    - alertmanager
 
 dependencies: []

@@ -1,2 +1,3 @@
 ---
 - import_tasks: prometheus.yml
+- import_tasks: alertmanager.yml
