@@ -19,5 +19,5 @@ inhibit_rules:
       - alertname
       - instance
 
-receiver:
+receivers:
   - name: default
