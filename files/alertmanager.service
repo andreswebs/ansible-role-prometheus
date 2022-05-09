@@ -9,7 +9,7 @@ Group=prometheus
 Type=simple
 ExecStart=/usr/local/bin/alertmanager \
     --config.file /etc/alertmanager/alertmanager.yml \
-    --storage.path=/var/lib/alertmanager/data
+    --storage.path=/var/lib/alertmanager/data/
 
 ExecReload=/bin/kill -HUP $MAINPID
 TimeoutStopSec=20s

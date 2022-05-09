@@ -33,6 +33,17 @@
     - prometheus
     - prometheus_system
 
+- name: Create /var/lib/prometheus/data
+  ansible.builtin.file:
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+    state: directory
+    dest: /var/lib/prometheus/data
+  tags:
+    - prometheus
+    - prometheus_system
+
 - name: Create Prometheus config dir
   ansible.builtin.file:
     owner: root

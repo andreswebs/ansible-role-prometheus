@@ -8,6 +8,7 @@ route:
   group_wait: 10s
   group_interval: 10s
   repeat_interval: 1h
+  receiver: default
 
 inhibit_rules:
   - source_matchers:
@@ -17,3 +18,6 @@ inhibit_rules:
     equal:
       - alertname
       - instance
+
+receiver:
+  - name: default
